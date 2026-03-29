@@ -15,7 +15,8 @@ if uploaded_file is not None:
     
     #fetch unique code
     user_list = df['user'].unique().tolist()
-    user_list.remove('group_notification')
+    if 'group_notification' in user_list:
+        user_list.remove('group_notification')
     user_list.sort()
     user_list.insert(0,"Overall")
     
@@ -83,10 +84,13 @@ if uploaded_file is not None:
         # activity heatmap
         st.title("Activity Heatmap")
         user_heatmap = helper.activity_heatmap(selected_user,df)
-        fig, ax = plt.subplots()
-        ax = sns.heatmap(user_heatmap)
-        #sns.heatmap(user_heatmap, annot=True, cmap="YlGnBu", fmt="d")
-        st.pyplot(fig)
+        if user_heatmap.empty:
+            st.info("Not enough data to show heatmap.")
+        else:
+            fig, ax = plt.subplots()
+            ax = sns.heatmap(user_heatmap)
+            #sns.heatmap(user_heatmap, annot=True, cmap="YlGnBu", fmt="d")
+            st.pyplot(fig)
 
         # finding the busiest users in the group(Group level)
         if selected_user == 'Overall':
